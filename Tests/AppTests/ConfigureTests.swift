@@ -1,3 +1,6 @@
+@testable import App
+import XCTVapor
+
 /**
  This test case verifies the configuration of the application.
  It creates an instance of the Application in testing mode, configures it using the `configure` function, and then performs the following assertions:
@@ -12,7 +15,7 @@ func testConfigure_ContainsFileMiddleware() async throws {
     try await configure(app)
 
     // Test that the FileMiddleware is registered
-    XCTAssertTrue(app.middleware.contains { $0 is FileMiddleware })
+    XCTAssertTrue(app.middleware.resolve().contains(where: { $0 is FileMiddleware }))
 
     // Test that the routes are registered
     XCTAssertTrue(app.routes.all.count > 0)
