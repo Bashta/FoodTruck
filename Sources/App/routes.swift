@@ -1,6 +1,21 @@
 import Vapor
 import SwiftHtml
 
+struct DefaultTemplate: TemplateRepresentable {
+    let title: String
+    
+    func render(_ req: Request) -> Tag {
+        Html {
+            Head {
+                Title(title)
+            }
+            Body {
+                H1(title)
+            }
+        }
+    }
+}
+
 func routes(_ app: Application) throws {
     
     app.get { req async in
@@ -8,27 +23,7 @@ func routes(_ app: Application) throws {
     }
     
     app.routes.get("hello") { req -> Response in
-        let doc = Document(.html) {
-            Html {
-                Head {
-                    Title("Hello, Head!")
-                }
-                Body {
-                    H1("Hello, Body!")
-                }
-            }
-        }
-        let body = DocumentRenderer(
-            minify: false,
-            indent: 4
-        )
-            .render(doc)
-        return Response(
-            status: .ok,
-            headers: [
-                "Content-Type": "text/html; charset=utf-8"
-            ],
-            body: .init(string: body)
-        )
+        let template = DefaultTemplate(title: "Hello Teplate Rendering")
+        return req.templates.renderHtml(template)
     }
 }
