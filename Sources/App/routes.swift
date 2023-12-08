@@ -3,16 +3,11 @@ import SwiftHtml
 
 func routes(_ app: Application) throws {
     
-    app.get { req async in
-        "It works!"
-    }
-    
-    app.routes.get("hello") { req -> Response in
-        let template = WebIndexTemplate(
-            WebIndexContext(
-                title: "Food Truck",
-                message: "Welcome to Food Truck")
+    app.routes.get { req -> Response in
+        req.templates.renderHtml(
+            WebIndexTemplate(WebIndexContext(title: "Home")) {
+                P("Hi there, welcome to my page!")
+            }
         )
-        return req.templates.renderHtml(template)
     }
 }

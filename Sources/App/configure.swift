@@ -8,7 +8,7 @@ public func configure(_ app: Application) async throws {
             publicDirectory: app.directory.publicDirectory
         )
     )
-
+    print(app.directory.publicDirectory)
     // register routes
     try routes(app)
 }
