@@ -33,4 +33,18 @@ struct BlogFrontendController {
             BlogPostsTemplate(context)
         )
     }
+    
+    func postView(req: Request) throws -> Response {
+        let slug = req.url.path.trimmingCharacters(
+            in: .init(charactersIn: "/")
+        )
+        guard let post = posts.first(where: { $0.slug == slug }) else {
+            return req.redirect(to: "/")
+        }
+        let context = BlogPostContext(post: post)
+
+        return req.templates.renderHtml(
+            BlogPostTemplate(context)
+        )
+    }
 }
