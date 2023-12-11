@@ -9,6 +9,12 @@ public func configure(_ app: Application) async throws {
         )
     )
     // register routes
-    let router = WebRouter()
-    try router.boot(routes: app.routes)
+    let routers: [RouteCollection] = [
+        WebRouter(),
+        BlogRouter()
+    ]
+    
+    for router in routers {
+        try router.boot(routes: app.routes)
+    }
 }
