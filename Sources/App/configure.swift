@@ -8,6 +8,9 @@ public func configure(_ app: Application) async throws {
             publicDirectory: app.directory.publicDirectory
         )
     )
+    
+    app.middleware.use(ExtendPathMiddleware())
+
     // register routes
     let routers: [RouteCollection] = [
         WebRouter(),
