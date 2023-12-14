@@ -6,6 +6,7 @@
 //
 
 import Vapor
+import Fluent
 
 struct BlogFrontendController {
     
@@ -14,6 +15,7 @@ struct BlogFrontendController {
             .query(on: req.db)
             .sort(\.$date, .descending)
             .all()
+        
         let posts = try postModels.map {
             Blog.Post.List(
                 id: try $0.requireID(),
@@ -25,11 +27,11 @@ struct BlogFrontendController {
             )
         }
         let ctx = BlogPostsContext(
-            icon: "🔥"
-            ,
+            icon: "🔥",
             title: "Blog",
             message: "Hot news and stories about everything.",
             posts: posts)
+
         return req.templates.renderHtml(
             BlogPostsTemplate(ctx)
         )
@@ -39,11 +41,9 @@ struct BlogFrontendController {
         let slug = req.url.path.trimmingCharacters(
             in: .init(charactersIn: "/")
         )
-        guard
-            let post = try await BlogPostModel
+        guard let post = try await BlogPostModel
                 .query(on: req.db)
-                // TODO: - This needs to be fixed
-//                .filter(\.$slug == slug)
+                .filter(\.$slug == slug)
                 .with(\.$category)
                 .first()
         else {
@@ -64,6 +64,7 @@ struct BlogFrontendController {
                 content: post.content
             )
         )
+
         return req.templates.renderHtml(
             BlogPostTemplate(ctx)
         )
