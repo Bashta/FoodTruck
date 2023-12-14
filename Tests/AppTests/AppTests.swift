@@ -7,7 +7,7 @@ final class AppTests: XCTestCase {
         defer { app.shutdown() }
         try await configure(app)
 
-        try app.test(.GET, "hello", afterResponse: { res in
+        try app.test(.GET, "/blog/", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
         })
     }
