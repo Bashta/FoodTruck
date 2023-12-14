@@ -13,15 +13,23 @@ public func configure(_ app: Application) async throws {
     let fileMiddleware = FileMiddleware(publicDirectory: app.directory.publicDirectory)
     app.middleware.use(fileMiddleware)
     
+    //
     app.middleware.use(ExtendPathMiddleware())
-
+    
+    app.sessions.use(.fluent)
+    app.migrations.add(SessionRecord.migration)
+    app.middleware.use(app.sessions.middleware)
+    
     // Configure migrations
     let modules: [ModuleInterface] = [
         WebModule(),
+        UserModule(),
         BlogModule()
     ]
     
     for module in modules {
         try module.boot(app)
     }
+    
+    try await app.autoMigrate().get()
 }
