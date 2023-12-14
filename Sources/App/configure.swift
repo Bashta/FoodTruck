@@ -24,4 +24,6 @@ public func configure(_ app: Application) async throws {
     for module in modules {
         try module.boot(app)
     }
+    
+    try await app.autoMigrate().get()
 }
