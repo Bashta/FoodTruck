@@ -18,6 +18,7 @@ public func configure(_ app: Application) async throws {
     // Configure migrations
     let modules: [ModuleInterface] = [
         WebModule(),
+        UserModule(),
         BlogModule()
     ]
     
