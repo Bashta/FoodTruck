@@ -13,7 +13,7 @@ struct BlogPostTemplate: TemplateRepresentable {
     init(_ context: BlogPostContext) {
         self.context = context
     }
-    
+
     var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long

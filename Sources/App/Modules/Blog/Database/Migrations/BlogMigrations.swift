@@ -9,32 +9,32 @@ import Foundation
 import Fluent
 
 enum BlogMigrations {
-    
-    struct v1: AsyncMigration {
+
+    struct V1: AsyncMigration {
         func prepare(on db: Database) async throws {
             try await db.schema(BlogCategoryModel.schema)
                 .id()
-                .field(BlogCategoryModel.FieldKeys.v1.title, .string, .required)
+                .field(BlogCategoryModel.FieldKeys.V1.title, .string, .required)
                 .create()
             try await db.schema(BlogPostModel.schema)
                 .id()
-                .field(BlogPostModel.FieldKeys.v1.title, .string, .required)
-                .field(BlogPostModel.FieldKeys.v1.slug, .string, .required)
-                .field(BlogPostModel.FieldKeys.v1.imageKey, .string, .required)
-                .field(BlogPostModel.FieldKeys.v1.excerpt, .data, .required)
-                .field(BlogPostModel.FieldKeys.v1.date, .datetime, .required)
-                .field(BlogPostModel.FieldKeys.v1.content, .data, .required)
-                .field(BlogPostModel.FieldKeys.v1.categoryId, .uuid)
+                .field(BlogPostModel.FieldKeys.V1.title, .string, .required)
+                .field(BlogPostModel.FieldKeys.V1.slug, .string, .required)
+                .field(BlogPostModel.FieldKeys.V1.imageKey, .string, .required)
+                .field(BlogPostModel.FieldKeys.V1.excerpt, .data, .required)
+                .field(BlogPostModel.FieldKeys.V1.date, .datetime, .required)
+                .field(BlogPostModel.FieldKeys.V1.content, .data, .required)
+                .field(BlogPostModel.FieldKeys.V1.categoryId, .uuid)
                 .foreignKey(
-                    BlogPostModel.FieldKeys.v1.categoryId,
+                    BlogPostModel.FieldKeys.V1.categoryId,
                     references: BlogCategoryModel.schema, .id,
                     onDelete: DatabaseSchema.ForeignKeyAction.setNull,
                     onUpdate: .cascade
                 )
-                .unique(on: BlogPostModel.FieldKeys.v1.slug)
+                .unique(on: BlogPostModel.FieldKeys.V1.slug)
                 .create()
         }
-        
+
         func revert(on db: Database) async throws {
             try await db.schema(BlogCategoryModel.schema).delete()
             try await db.schema(BlogPostModel.schema).delete()
@@ -45,7 +45,7 @@ enum BlogMigrations {
 // MARK: - Seed
 
 extension BlogMigrations {
-    struct seed: AsyncMigration {
+    struct Seed: AsyncMigration {
         func prepare(on db: Database) async throws {
             let categories = (1...4).map { index in
                 BlogCategoryModel(title: "Sample category #\(index)")

@@ -8,7 +8,7 @@
 import Foundation
 
 extension Blog.Post {
-    
+
     struct List: Codable {
         let id: UUID
         let title: String
@@ -17,7 +17,7 @@ extension Blog.Post {
         let excerpt: String
         let date: Date
     }
-    
+
     struct Detail: Codable {
         let id: UUID
         let title: String

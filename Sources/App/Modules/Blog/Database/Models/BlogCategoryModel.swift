@@ -14,24 +14,24 @@ final class BlogCategoryModel: DatabaseModelInterface {
 
     static let identifier = "categories"
     static let schema = "blog_categories"
-    
+
     struct FieldKeys {
-        struct v1 {
+        struct V1 {
             static var title: FieldKey { "title" }
         }
     }
-    
+
     @ID()
     var id: UUID?
-    
-    @Field(key: FieldKeys.v1.title)
+
+    @Field(key: FieldKeys.V1.title)
     var title: String
-    
+
     @Children(for: \.$category)
     var posts: [BlogPostModel]
-    
+
     init() { }
-    
+
     init(id: UUID? = nil, title: String) {
         self.id = id
         self.title = title

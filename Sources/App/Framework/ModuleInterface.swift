@@ -16,6 +16,6 @@ public extension ModuleInterface {
     static var identifier: String {
         String(describing: self).dropLast(6).lowercased()
     }
-    
+
     func boot(_ app: Application) throws {  }
 }

@@ -9,9 +9,10 @@ let package = Package(
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.83.1"),
-        .package(url: "https://github.com/vapor/fluent",from: "4.4.0"),
-        .package(url: "https://github.com/vapor/fluent-sqlite-driver",from: "4.1.0"),
-        .package(url: "https://github.com/binarybirds/swift-html", from: "1.7.0")
+        .package(url: "https://github.com/vapor/fluent", from: "4.4.0"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver", from: "4.1.0"),
+        .package(url: "https://github.com/binarybirds/swift-html", from: "1.7.0"),
+        .package(url: "https://github.com/realm/SwiftLint", branch: "main")
     ],
     targets: [
         .executableTarget(
@@ -21,7 +22,10 @@ let package = Package(
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .product(name: "SwiftHtml", package: "swift-html"),
-                .product(name: "SwiftSvg", package: "swift-html"),
+                .product(name: "SwiftSvg", package: "swift-html")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintPlugin", package: "SwiftLint")
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [
@@ -32,7 +36,7 @@ let package = Package(
             .product(name: "Fluent", package: "Fluent"),
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             .product(name: "SwiftHtml", package: "swift-html"),
-            .product(name: "SwiftSvg", package: "swift-html"),
+            .product(name: "SwiftSvg", package: "swift-html")
         ])
     ]
 )
