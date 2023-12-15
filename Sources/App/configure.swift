@@ -13,9 +13,10 @@ public func configure(_ app: Application) async throws {
     let fileMiddleware = FileMiddleware(publicDirectory: app.directory.publicDirectory)
     app.middleware.use(fileMiddleware)
 
-    //
+    // Configure routing
     app.middleware.use(ExtendPathMiddleware())
 
+    // Configure sessions
     app.sessions.use(.fluent)
     app.migrations.add(SessionRecord.migration)
     app.middleware.use(app.sessions.middleware)

@@ -7,6 +7,7 @@
 
 import Vapor
 import Fluent
+
 enum UserMigrations {
     struct V1: AsyncMigration {
         func prepare(on db: Database) async throws {
