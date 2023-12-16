@@ -13,12 +13,12 @@ struct WebFrontendController {
             icon: "👋",
             title: "Home",
             message: "Hi there, welcome to hy homepage 🥸",
-            paragraph: 
+            paragraph:
                 [
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                  "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-                 "Nisi ut aliquip ex ea commodo consequat.",
+                 "Nisi ut aliquip ex ea commodo consequat."
             ],
             link: .init(
                 label: "Read my blog →",

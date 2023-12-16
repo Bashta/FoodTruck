@@ -9,13 +9,13 @@ import Vapor
 import Fluent
 
 struct BlogFrontendController {
-    
+
     func blogView(req: Request) async throws -> Response {
         let postModels = try await BlogPostModel
             .query(on: req.db)
             .sort(\.$date, .descending)
             .all()
-        
+
         let posts = try postModels.map {
             Blog.Post.List(
                 id: try $0.requireID(),
@@ -36,7 +36,7 @@ struct BlogFrontendController {
             BlogPostsTemplate(ctx)
         )
     }
-    
+
     func postView(req: Request) async throws -> Response {
         let slug = req.url.path.trimmingCharacters(
             in: .init(charactersIn: "/")

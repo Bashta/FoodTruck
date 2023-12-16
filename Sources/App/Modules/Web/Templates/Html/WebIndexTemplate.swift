@@ -37,7 +37,7 @@ public struct WebIndexTemplate: TemplateRepresentable {
         self.context = context
         self.body = builder()
     }
-    
+
     @TagBuilder
     public func render(_ req: Request) -> Tag {
         Html {
@@ -87,8 +87,7 @@ public struct WebIndexTemplate: TemplateRepresentable {
                                 if req.auth.has(AuthenticatedUser.self) {
                                     A("Sign out")
                                         .href("/sign-out/")
-                                }
-                                else {
+                                } else {
                                     A("Sign in")
                                         .href("/sign-in/")
                                 }
