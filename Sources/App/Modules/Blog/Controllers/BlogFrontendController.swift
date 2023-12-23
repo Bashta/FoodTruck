@@ -9,39 +9,30 @@ import Vapor
 import Fluent
 
 struct BlogFrontendController {
-
+    
     func blogView(req: Request) async throws -> Response {
-        let postModels = try await BlogPostModel
+        let posts = try await BlogPostModel
             .query(on: req.db)
             .sort(\.$date, .descending)
             .all()
-
-        let posts = try postModels.map {
-            Blog.Post.List(
-                id: try $0.requireID(),
-                title: $0.title,
-                slug: $0.slug,
-                image: $0.imageKey,
-                excerpt: $0.excerpt,
-                date: $0.date
-            )
-        }
+        let api = BlogPostApiController()
+        let list = posts.map { api.mapList($0) }
         let ctx = BlogPostsContext(
-            icon: "🔥",
+            icon: "🔥"
+            ,
             title: "Blog",
             message: "Hot news and stories about everything.",
-            posts: posts)
-
-        return req.templates.renderHtml(
-            BlogPostsTemplate(ctx)
+            posts: list
         )
+        return req.templates.renderHtml(BlogPostsTemplate(ctx))
     }
-
+    
     func postView(req: Request) async throws -> Response {
         let slug = req.url.path.trimmingCharacters(
             in: .init(charactersIn: "/")
         )
-        guard let post = try await BlogPostModel
+        guard
+            let post = try await BlogPostModel
                 .query(on: req.db)
                 .filter(\.$slug == slug)
                 .with(\.$category)
@@ -49,24 +40,8 @@ struct BlogFrontendController {
         else {
             return req.redirect(to: "/")
         }
-        let ctx = BlogPostContext(
-            post: Blog.Post.Detail(
-                id: post.id!,
-                title: post.title,
-                slug: post.slug,
-                image: post.imageKey,
-                excerpt: post.excerpt,
-                date: post.date,
-                category: .init(
-                    id: post.category.id!,
-                    title: post.category.title
-                ),
-                content: post.content
-            )
-        )
-
-        return req.templates.renderHtml(
-            BlogPostTemplate(ctx)
-        )
+        let api = BlogPostApiController()
+        let ctx = BlogPostContext(post: api.mapDetail(post))
+        return req.templates.renderHtml(BlogPostTemplate(ctx))
     }
 }
