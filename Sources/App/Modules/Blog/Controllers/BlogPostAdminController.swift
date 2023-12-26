@@ -8,7 +8,7 @@
 import Vapor
 import Fluent
 
-struct BlogPostAdminController: AdminListController {
+struct BlogPostAdminController: AdminListController, AdminDetailController {
     
     typealias DatabaseModel = BlogPostModel
     
@@ -21,7 +21,7 @@ struct BlogPostAdminController: AdminListController {
             .init("title"),
         ]
     }
-
+    
     func listCells(for model: DatabaseModel) -> [CellContext] {
         [
             .init(model.imageKey, type: .image),
@@ -29,16 +29,11 @@ struct BlogPostAdminController: AdminListController {
         ]
     }
     
-    func detailView(_ req: Request) async throws -> Response {
-        let post = try await findBy(identifier(req), on: req.db)
-        let detail = BlogPostApiController().mapDetail(post)
-        let template = BlogPostAdminDetailTemplate(
-            .init(
-                title: "Post details",
-                detail: detail
-            )
-        )
-        return req.templates.renderHtml(template)
+    func detailFields(for model: DatabaseModel) -> [DetailContext] {
+        [
+            .init("image", model.imageKey, type: .image),
+            .init("title", model.title),
+        ]
     }
     
     private func renderEditForm(_ req: Request, _ title: String, _ form: BlogPostEditForm) -> Response {
