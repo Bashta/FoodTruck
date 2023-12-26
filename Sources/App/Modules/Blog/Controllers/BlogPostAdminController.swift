@@ -8,37 +8,29 @@
 import Vapor
 import Fluent
 
-struct BlogPostAdminController {
+struct BlogPostAdminController: AdminListController {
     
-    func find(_ req: Request) async throws -> BlogPostModel {
-        guard let id = req.parameters.get("postId"),
-              let uuid = UUID(uuidString: id),
-              let post = try await BlogPostModel
-            .query(on: req.db)
-            .filter(\.$id == uuid)
-            .with(\.$category)
-            .first()
-        else {
-            throw Abort(.notFound)
-        }
-        return post
+    typealias DatabaseModel = BlogPostModel
+    
+    let modelName: Name = .init(singular: "post")
+    let parameterId: String = "postId"
+    
+    func listColumns() -> [ColumnContext] {
+        [
+            .init("image"),
+            .init("title"),
+        ]
     }
-    
-    func listView(_ req: Request) async throws -> Response {
-        let posts = try await BlogPostModel.query(on: req.db).all()
-        let api = BlogPostApiController()
-        let list = posts.map { api.mapList($0) }
-        let template = BlogPostAdminListTemplate(
-            .init(
-                title: "Posts",
-                list: list
-            )
-        )
-        return req.templates.renderHtml(template)
+
+    func listCells(for model: DatabaseModel) -> [CellContext] {
+        [
+            .init(model.imageKey, type: .image),
+            .init(model.title, link: .init(label: model.title)),
+        ]
     }
     
     func detailView(_ req: Request) async throws -> Response {
-        let post = try await find(req)
+        let post = try await findBy(identifier(req), on: req.db)
         let detail = BlogPostApiController().mapDetail(post)
         let template = BlogPostAdminDetailTemplate(
             .init(
@@ -84,7 +76,7 @@ struct BlogPostAdminController {
     }
     
     func updateView(_ req: Request) async throws -> Response {
-        let model = try await find(req)
+        let model = try await findBy(identifier(req), on: req.db)
         let form = BlogPostEditForm(model)
         try await form.load(req: req)
         try await form.read(req: req)
@@ -92,7 +84,7 @@ struct BlogPostAdminController {
     }
     
     func updateAction(_ req: Request) async throws -> Response {
-        let model = try await find(req)
+        let model = try await findBy(identifier(req), on: req.db)
         let form = BlogPostEditForm(model)
         try await form.load(req: req)
         try await form.process(req: req)
@@ -109,7 +101,7 @@ struct BlogPostAdminController {
     }
     
     func deleteView(_ req: Request) async throws -> Response {
-        let model = try await find(req)
+        let model = try await findBy(identifier(req), on: req.db)
         let template = BlogPostAdminDeleteTemplate(
             .init(
                 title: "Delete post",
@@ -119,8 +111,9 @@ struct BlogPostAdminController {
         )
         return req.templates.renderHtml(template)
     }
+    
     func deleteAction(_ req: Request) async throws -> Response {
-        let model = try await find(req)
+        let model = try await findBy(identifier(req), on: req.db)
         try await req.fs.delete(key: model.imageKey)
         try await model.delete(on: req.db)
         return req.redirect(to: "/admin/blog/posts/")

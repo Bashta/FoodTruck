@@ -1,0 +1,27 @@
+//
+//  AdminListPageContext.swift
+//
+//
+//  Created by Erison on 26/12/2023.
+//
+
+public struct AdminListPageContext {
+
+    public let title: String
+    public let table: TableContext
+    public let navigation: [LinkContext]
+    public let breadcrumbs: [LinkContext]
+
+    public init(
+        title: String,
+        table: TableContext,
+        navigation: [LinkContext] = [],
+        breadcrumbs: [LinkContext] = []
+    ) {
+        self.title = title
+        self.table = table
+        self.navigation = navigation
+        self.breadcrumbs = breadcrumbs
+    }
+
+}
