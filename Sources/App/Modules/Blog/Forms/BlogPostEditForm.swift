@@ -7,10 +7,10 @@
 
 import Vapor
 
-final class BlogPostEditForm: AbstractForm {
+struct BlogPostEditor: ModelEditorInterface {
     
-    unowned var model: BlogPostModel
-    
+    let model: BlogPostModel
+    let form: AbstractForm
     var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -18,33 +18,19 @@ final class BlogPostEditForm: AbstractForm {
         return formatter
     }()
     
-    public init(_ model: BlogPostModel) {
-        var url = "/admin/blog/posts/"
-        if let id = model.$id.value {
-            url = url + id.uuidString + "/update/"
-        } else {
-            url = url + "create/"
-        }
-        
+    init(model: BlogPostModel, form: AbstractForm) {
         self.model = model
-        super.init(
-            action: .init(
-                method: .post,
-                url: url,
-                enctype: .multipart
-            )
-        )
-        self.fields = createFields()
+        self.form = form
     }
     
     @FormComponentBuilder
-    func createFields() -> [FormComponent] {
+    var formFields: [FormComponent] {
         ImageField("image", path: "blog/post")
-            .read { [unowned self] in
+            .read {
                 $1.output.context.previewUrl = model.imageKey
                 ($1 as! ImageField).imageKey = model.imageKey
             }
-            .write { [unowned self] in
+            .write {
                 model.imageKey = ($1 as! ImageField).imageKey ?? ""
             }
         InputField("slug")
@@ -54,10 +40,10 @@ final class BlogPostEditForm: AbstractForm {
             .validators {
                 FormFieldValidator.required($1)
             }
-            .read { [unowned self] in
+            .read {
                 $1.output.context.value = model.slug
             }
-            .write { [unowned self] in
+            .write {
                 model.slug = $1.input
             }
         InputField("title")
@@ -67,10 +53,10 @@ final class BlogPostEditForm: AbstractForm {
             .validators {
                 FormFieldValidator.required($1)
             }
-            .read { [unowned self] in
+            .read {
                 $1.output.context.value = model.title
             }
-            .write { [unowned self] in
+            .write {
                 model.title = $1.input
             }
         InputField("date")
@@ -81,26 +67,18 @@ final class BlogPostEditForm: AbstractForm {
             .validators {
                 FormFieldValidator.required($1)
             }
-            .read { [unowned self] in
+            .read {
                 $1.output.context.value = dateFormatter.string(from: model.date)
             }
-            .write { [unowned self] in
+            .write {
                 model.date = dateFormatter.date(from: $1.input) ?? Date()
             }
         TextareaField("excerpt")
-            .read { [unowned self] in
-                $1.output.context.value = model.excerpt
-            }
-            .write { [unowned self] in
-                model.excerpt = $1.input
-            }
+            .read { $1.output.context.value = model.excerpt }
+            .write { model.excerpt = $1.input }
         TextareaField("content")
-            .read { [unowned self] in
-                $1.output.context.value = model.content
-            }
-            .write { [unowned self] in
-                model.content = $1.input
-            }
+            .read { $1.output.context.value = model.content }
+            .write { model.content = $1.input }
         SelectField("category")
             .load { req, field in
                 let categories = try await BlogCategoryModel
@@ -110,10 +88,10 @@ final class BlogPostEditForm: AbstractForm {
                     OptionContext(key: $0.id!.uuidString, label: $0.title)
                 }
             }
-            .read { [unowned self] req, field in
+            .read { req, field in
                 field.output.context.value = model.$category.id.uuidString
             }
-            .write { [unowned self] req, field in
+            .write { req, field in
                 if
                     let uuid = UUID(uuidString: field.input),
                     let category = try await BlogCategoryModel
