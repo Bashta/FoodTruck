@@ -11,7 +11,8 @@ import Fluent
 struct BlogCategoryAdminController: AdminListController,
                                     AdminDetailController,
                                     AdminCreateController,
-                                    AdminUpdateController {
+                                    AdminUpdateController,
+                                    AdminDeleteController {
     typealias DatabaseModel = BlogCategoryModel
     typealias CreateModelEditor = BlogCategoryEditor
     typealias UpdateModelEditor = BlogCategoryEditor
@@ -35,6 +36,10 @@ struct BlogCategoryAdminController: AdminListController,
         [
             .init("title", model.title),
         ]
+    }
+    
+    func deleteInfo(_ model: DatabaseModel) -> String {
+        model.title
     }
     
 }

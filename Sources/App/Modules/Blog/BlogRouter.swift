@@ -16,24 +16,26 @@ struct BlogRouter: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.get("blog", use: controller.blogView)
         routes.get(.anything, use: controller.postView)
-        
+
         let blog = routes
-        .grouped(AuthenticatedUser.redirectMiddleware(path: "/"))
-        .grouped("admin", "blog")
-        
+            .grouped(AuthenticatedUser.redirectMiddleware(path: "/"))
+            .grouped("admin", "blog")
+
         let categories = blog.grouped("categories")
         categories.get(use: categoryAdminController.listView)
         categories.get("create", use: categoryAdminController.createView)
         categories.post("create", use: categoryAdminController.createAction)
-        
+
         let categoryId = categories.grouped(":categoryId")
         categoryId.get(use: categoryAdminController.detailView)
         categoryId.get("update", use: categoryAdminController.updateView)
         categoryId.post("update", use: categoryAdminController.updateAction)
-        
+        categoryId.get("delete", use: categoryAdminController.deleteView)
+        categoryId.post("delete", use: categoryAdminController.deleteAction)
+
         let posts = blog.grouped("posts")
         posts.get(use: postAdminController.listView)
-       
+
         let postId = posts.grouped(":postId")
         postId.get(use: postAdminController.detailView)
         posts.get("create", use: postAdminController.createView)
