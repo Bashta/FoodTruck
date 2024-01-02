@@ -49,5 +49,7 @@ struct BlogRouter: RouteCollection {
         let blogApi = routes.grouped("api", "blog")
         let categoriesApi = blogApi.grouped("categories")
         categoriesApi.get(use: categoryApiController.listApi)
+        let categoryApiId = categoriesApi.grouped(":categoryId")
+        categoryApiId.get(use: categoryApiController.detailApi)
     }
 }

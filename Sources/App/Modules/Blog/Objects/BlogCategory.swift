@@ -13,5 +13,10 @@ extension Blog.Category {
         let id: UUID
         let title: String
     }
+    
+    struct Detail: Codable {
+        let id: UUID
+        let title: String
+    }
 
 }
