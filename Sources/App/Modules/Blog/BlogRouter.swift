@@ -12,7 +12,8 @@ struct BlogRouter: RouteCollection {
     let controller = BlogFrontendController()
     let postAdminController = BlogPostAdminController()
     let categoryAdminController = BlogCategoryAdminController()
-    
+    let categoryApiController = BlogCategoryApiController()
+
     func boot(routes: RoutesBuilder) throws {
         routes.get("blog", use: controller.blogView)
         routes.get(.anything, use: controller.postView)
@@ -44,5 +45,9 @@ struct BlogRouter: RouteCollection {
         postId.post("update", use: postAdminController.updateAction)
         postId.get("delete", use: postAdminController.deleteView)
         postId.post("delete", use: postAdminController.deleteAction)
+        
+        let blogApi = routes.grouped("api", "blog")
+        let categoriesApi = blogApi.grouped("categories")
+        categoriesApi.get(use: categoryApiController.listApi)
     }
 }
